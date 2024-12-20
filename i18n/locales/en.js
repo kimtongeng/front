@@ -1,5 +1,6 @@
 export default {
-  hello:"Hello",
   home:"Home",
-  welcome:"welcome"
+  welcome:"welcome",
+  dashboard:"Dashboard",
+  get_icon:"Get Icon"
 }
