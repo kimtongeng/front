@@ -1,5 +1,7 @@
 export default {
   hello:"Hello",
   home:"Home",
-  welcome:"welcome"
+  welcome:"welcome",
+  book_list:"Book list",
+  dashboard:"Dashboard"
 }
