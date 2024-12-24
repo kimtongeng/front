@@ -41,7 +41,8 @@
   </div>
 </nav>
 
-<SideMenu></SideMenu>
+<Sidebar></Sidebar>
+
 
 <div class="p-4 sm:ml-64">
    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
@@ -59,13 +60,25 @@ import SideMenu from '~/components/SideMenu.vue';
 const { setLocale } = useI18n();
    const lang = ref("kh");
 
-   watch(lang , (newValue,oldValue)=>{
+   // data
 
+   // watched
+   watch(lang , (newValue,oldValue)=>{
       setLocale(newValue);
    })
 
 
 
+   // function
+
+
+
+
+
+
+
+
+   
 </script>
 
 <style lang="scss" scoped>
