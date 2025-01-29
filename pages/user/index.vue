@@ -102,7 +102,6 @@ onMounted(async () => {
   })
   
   data.value = JSON.parse(localStorage.getItem("user")) ?? [] ;
-  console.log(data.value);
   
 
 })
@@ -125,7 +124,6 @@ const add = () => {
   const lastId = data.value.length > 0 ? data.value[data.value.length - 1].id : 0;
   const id = lastId + 1;
 
-  console.log("New ID:", id);
 
   // Add the new user to the array
   data.value.push({

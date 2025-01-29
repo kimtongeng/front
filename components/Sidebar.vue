@@ -124,7 +124,7 @@ const route = useRoute()
 
 function isChild(child){
   openChild.value.push(child)
-  console.log(openChild.value);
+
 }
 function dropChild(id){
   const item = visibility.value.find(item => item.id === id);

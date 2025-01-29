@@ -44,7 +44,6 @@ let admin = reactive({
 const user = ref(null);
 onMounted(()=>{
   user.value = JSON.parse(localStorage.getItem("user"));
-  console.log(user)
 })
 
 

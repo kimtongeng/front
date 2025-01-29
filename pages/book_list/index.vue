@@ -1,14 +1,16 @@
 <template>
   <div>
-    <img src="" alt="" id="poster" ref="poster">
     <Table :title="'book_list'" :header="header" :listData="data" :action="true" @reload-data="reloadData">
-
-      <template #action>
+      <template #image="{row}">
+        <img :src="getImage(row.posterImageBytes)" alt="" width="100px" style="border-radius: 10px;">
+      </template>
+      <template #action="{row}">
+        
         <li>
-          <EditButton @ButtonAction="editHandler"></EditButton>
+          <EditButton @ButtonAction="editHandler(row.id)"></EditButton>
         </li>
         <li>
-          <DeleteButton @ButtonAction="deleteHandler"></DeleteButton>
+          <DeleteButton @ButtonAction="deleteHandler(row.id)"></DeleteButton>
         </li>
       </template>
 
@@ -41,16 +43,16 @@
             }}</label>
           <select id="author" v-model="form.author"
             class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            <option value="">option 1</option>
-            <option value="">option 2</option>
-            <option value="">option 3</option>
+            <option value="option 1">option 1</option>
+            <option value="option 1">option 2</option>
+            <option value="option 1">option 3</option>
           </select>
         </div>
         <div class="col-span-2">
           <label for="genre" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">{{
             $t("publicDate") }}</label>
           <div class="relative">
-            
+
             <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
               <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor"
                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -59,7 +61,7 @@
                   clip-rule="evenodd"></path>
               </svg>
             </div>
-            <input type="text" ref="datepicker" datepicker v-model="dateData"
+            <input type="text" ref="datepicker" datepicker
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Select date" />
           </div>
@@ -103,9 +105,8 @@
 <script setup>
 import { useFlowbite } from '~/composables/useFlowbite';
 import { default as axios } from 'axios';
-const poster = ref(null);
+const posterBase64 = ref(null);
 const datepicker = ref(null);
-const file = ref(null);
 const { setLocale } = useI18n();
 const localPath = useLocalePath();
 const header = ref([
@@ -160,7 +161,7 @@ const header = ref([
     isSort: true
   },
 ])
-const dateData = reactive("");
+
 
 let data = ref([]);
 const titleType = ref("add_book");
@@ -172,10 +173,7 @@ const defaultForm = {
   publicationDate: null,
   genre: null,
   description: null,
-  posterImageName: null,
-  posterImageType: null,
-  posterImageBytes: null,
-  posterImageUrl: null,
+  poster:null
 };
 let form = reactive({});
 onMounted(async () => {
@@ -190,8 +188,15 @@ const editHandler = () => {
   titleType.value = "edit_book"
   typeAction.value = "edit"
 }
-const deleteHandler = () => {
-  alert(123)
+const deleteHandler =async (id) => {
+  try {
+    const response = await axios.delete(`https://library-render-oewo.onrender.com/v1/books/${id}`);
+  
+    await fetchBooks();
+  
+  } catch (error) {
+    console.error(error); 
+  }
 }
 const edit = () => {
   alert(123);
@@ -207,35 +212,60 @@ const fetchBooks = async () => {
   try {
     const response = await axios.get("https://library-render-oewo.onrender.com/v1/books/");
     data.value = response.data;
-    
+
   } catch (error) {
     console.error(error);
   }
 };
-const getImage = async ()=>{
+
+const getImage = (image)=>{
+  return `data:image/png;base64,${image}`
+}
+
+// const add = () => {
+//   console.dir(datepicker.value.value);
+//   console.log(form.poster);
+
+// }
+const add = async () => {
   try {
-    const response = await axios.get("https://library-render-oewo.onrender.com/v1/books/18/poster");
-    data.value = response.data;
+    // Create FormData instance
+    const formData = new FormData();
+    let id = Number(data.value[data.value.length-1].id) + 1
+    formData.append('id', id);
+    formData.append('title', form.title);
+    formData.append('author', form.author);
+
+    
+    formData.append('publicationDate', datepicker.value.value);
+    formData.append('genre', form.genre);
+    formData.append('description', form.description);
+
+    // Assuming you have a file input element to select the file
+    
+      formData.append('posterImageFile', form.poster);
+    
+
+    // Make the POST request
+    const response = await axios.post('https://library-render-oewo.onrender.com/v1/books/create', formData, {
+      headers: {
+       'Content-Type': 'multipart/form-data'
+      },
+    });
+
+
+    if(response){
+      await fetchBooks();
+    }
     
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
   }
-}
-const add = () => {
-  console.dir(datepicker.value.value);
-  console.log(file.value);
-
-}
+};
 const fileHandler = (e) => {
-  const file = e.target.files[0]; // Get the first selected file
-  if (file) {
-    console.log("File selected:", file.name);
-    // Handle file processing here, e.g., uploading to a server
-  } else {
-    console.log("No file selected");
-  }
+  form.poster = e.target.files[0];
 }
-const reloadData = ()=>{
+const reloadData = () => {
   fetchBooks();
 }
 </script>

@@ -90,7 +90,7 @@ let user = ref({});
 onMounted(()=>{
   const isLogin = localStorage.getItem("isLogin");
   user.value = JSON.parse(localStorage.getItem("user"));
-  console.log(user);
+
   
   if(isLogin != "true"){
     router.push("/login");
