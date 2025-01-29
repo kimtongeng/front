@@ -72,30 +72,7 @@ const route = useRoute()
     key:"book_list",
     path:"/book_list",
   },
-  {
-    id: 2,
-    type:"link",
-    icon:"solar:notebook-bookmark-broken",
-    label:"book_type",
-    key:"booK_type",
-    path:"/book_type",
-  },
-  {
-    id: 4,
-    type:"link",
-    icon:"solar:user-speak-broken",
-    label:"author",
-    key:"author",
-    path:"/author",
-  },
-  {
-    id: 5,
-    type:"link",
-    icon:"solar:users-group-two-rounded-line-duotone",
-    label:"student",
-    key:"student",
-    path:"/student",
-  },
+
 
   // {
   //   id: 6,

@@ -24,7 +24,7 @@ export default {
   sort_by:"តម្រៀបតាម",
   search:"ស្វែងរក",
   delete:"លុប",
-  edit:"កែប្រគល់",
+  edit:"កែប្រែ",
   save:"រក្សាទុក",
   cancel:"បោះបង់",
   add_category:"បន្ថែមប្រភេទ",
@@ -32,8 +32,8 @@ export default {
   edit_book:"កែប្រែសៀវភៅ",
   sure_to_del:"តើអ្នកប្រាកដថាចង់លុប?",
   yes:"យល់ព្រម",
-  no:"មិនយល់ព្រម"
-
+  no:"មិនយល់ព្រម",
+  genre:"ប្រភេទ"
 
 
 

@@ -1,12 +1,13 @@
 <template>
   <div>
-    <Table :title="'book_list'" :header="header" :listData="data" :action="true" @reload-data="reloadData">
+    <Table :title="'book_list'" @addHandler="addHandler" :header="header" :listData="data" :action="true" @reload-data="reloadData">
       <template #image="{row}">
         <img :src="getImage(row.posterImageBytes)" alt="" width="100px" style="border-radius: 10px;">
       </template>
       <template #action="{row}">
         
         <li>
+          
           <EditButton @ButtonAction="editHandler(row.id)"></EditButton>
         </li>
         <li>
@@ -29,7 +30,7 @@
 
     </Table>
     <!-- modal -->
-    <AddModal :title="titleType" @addClick="add" :typeAction="typeAction" @editClick="edit">
+    <AddModal ref="model" :title="titleType" @addClick="add" :typeAction="typeAction" @editClick="edit">
       <template #form>
         <div class="col-span-2">
           <label for="title" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">{{
@@ -39,14 +40,19 @@
             :placeholder="$t('title')" required="" v-model="form.title">
         </div>
         <div class="col-span-2">
-          <label for="author" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">{{ $t("author")
+          <!-- <label for="author" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">{{ $t("author")
             }}</label>
           <select id="author" v-model="form.author"
             class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             <option value="option 1">option 1</option>
             <option value="option 1">option 2</option>
             <option value="option 1">option 3</option>
-          </select>
+          </select> -->
+          <label for="author" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">{{ $t("author")
+            }}</label>
+            <input type="text" name="author" id="author"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            :placeholder="$t('author')" required="" v-model="form.author">
         </div>
         <div class="col-span-2">
           <label for="genre" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">{{
@@ -109,6 +115,7 @@ const posterBase64 = ref(null);
 const datepicker = ref(null);
 const { setLocale } = useI18n();
 const localPath = useLocalePath();
+const model = ref(null);
 const header = ref([
   {
     label: "id",
@@ -184,9 +191,13 @@ onMounted(async () => {
   await fetchBooks();
   setForm();
 })
-const editHandler = () => {
+const editHandler = (id) => {
   titleType.value = "edit_book"
   typeAction.value = "edit"
+
+  model.value.openModel(id);
+
+  
 }
 const deleteHandler =async (id) => {
   try {
@@ -198,8 +209,41 @@ const deleteHandler =async (id) => {
     console.error(error); 
   }
 }
-const edit = () => {
-  alert(123);
+const edit = async (id) => {
+
+  try {
+    // Create FormData instance
+    const formData = new FormData();
+    
+    formData.append('id', id);
+    formData.append('title', form.title);
+    formData.append('author', form.author);
+
+    
+    formData.append('publicationDate', datepicker.value.value);
+    formData.append('genre', form.genre);
+    formData.append('description', form.description);
+
+    // Assuming you have a file input element to select the file
+    
+      formData.append('posterImageFile', form.poster);
+    
+
+    // Make the POST request
+    const response = await axios.put(`https://library-render-oewo.onrender.com/v1/books/${id}/update`, formData, {
+      headers: {
+       'Content-Type': 'multipart/form-data'
+      },
+    });
+
+
+    if(response){
+      await fetchBooks();
+    }
+    setForm();
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 const setForm = () => {
   Object.assign(form, defaultForm);
@@ -257,7 +301,7 @@ const add = async () => {
     if(response){
       await fetchBooks();
     }
-    
+    setForm();
   } catch (error) {
     console.error('Error:', error);
   }
@@ -267,6 +311,10 @@ const fileHandler = (e) => {
 }
 const reloadData = () => {
   fetchBooks();
+}
+const addHandler = ()=>{
+  typeAction.value = "add";
+  model.value.openModel();
 }
 </script>
 

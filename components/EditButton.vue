@@ -1,5 +1,5 @@
 <template>
-          <button data-modal-target="crud-modal" @click="ButtonAction"  data-modal-toggle="crud-modal" type="button" class="w-full text-left block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ $t(props.text) }}</button>
+          <button data-modal-toggle="crud-modal" data-modal-target="crud-modal" @click="ButtonAction"  type="button" class="w-full text-left block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ $t(props.text) }}</button>
 </template>
 
 <script setup>

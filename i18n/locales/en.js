@@ -20,15 +20,7 @@ export default {
   add_book:"Add Book",
   refresh:"Refresh",
   email:"email",
-  
-
-
-
-
-
-
-
-
+  genre: "Genre",
   yes:"Yes",
   no:"No",
   refresh: "Refresh",
